@@ -1,0 +1,11 @@
+<!-- templates/partials/navbar.html -->
+<li>
+  <form method="post" action="{% url 'logout' %}" style="margin:0;">
+    {% csrf_token %}
+    <button type="submit"
+            class="dropdown-item text-danger"
+            style="width:100%; text-align:left;">
+      <i class="fas fa-sign-out-alt me-2"></i>Logout
+    </button>
+  </form>
+</li>

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<style>
+  .form-wrapper {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    font-family: 'Inter', sans-serif;
+  }
+  .form-wrapper h2 {
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #212529;
+  }
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  .form-group label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    display: block;
+    color: #212529;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background: #f8f9fa;
+    color: #212529;
+  }
+  .form-group textarea {
+    resize: vertical;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: #0d6efd;
+    background: #fff;
+    outline: none;
+  }
+  .error-text {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
+  /* Table header / title colors */
+  .form-wrapper h2 {
+    color: #000; /* Add New Product başlığı siyah */
+  }
+</style>
+
+<div class="form-wrapper">
+  <h2>{{ title }}</h2>
+  <form method="post" action="">
+    {% csrf_token %}
+    
+    {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+      {{ field }}
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <div class="error-text">{{ error }}</div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+      <a href="{% url 'product_list' %}" style="flex: 1; padding: 0.75rem; background: #6c757d; color: white; text-decoration: none; text-align: center; border-radius: 4px;">
+        Geri
+      </a>
+      <button type="submit" style="flex: 1; padding: 0.75rem; background: #4f46e5; color: white; border: none; border-radius: 4px;">
+        Kaydet
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

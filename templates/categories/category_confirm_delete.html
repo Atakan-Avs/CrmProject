@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Category{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 2rem auto; padding: 1.5rem; background: #fff; border: 1px solid #dee2e6; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.06); font-family: 'Inter', sans-serif; color: #212529;">
+  <h2 style="margin-bottom: 1rem; color: #b02a37; font-weight: 600;">
+    Delete Category Confirmation
+  </h2>
+  
+  <div style="background: #fff3cd; border: 1px solid #ffe69c; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
+    <h6 style="margin: 0 0 0.5rem 0; color: #664d03; font-weight: 600;">Warning!</h6>
+    <p style="margin: 0; color: #664d03;">
+      Are you sure you want to delete <strong>{{ category.name }}</strong>?
+    </p>
+  </div>
+
+  <div style="margin-bottom: 1.5rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+      <div>
+        <strong style="color:#000;">Category Name:</strong><br>
+        {{ category.name }}
+      </div>
+      <div>
+        <strong style="color:#000;">Products:</strong><br>
+        {{ category.product_count }}
+      </div>
+      <div>
+        <strong style="color:#000;">Description:</strong><br>
+        {{ category.description|truncatechars:50 }}
+      </div>
+    </div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div style="display: flex; gap: 1rem;">
+      <a href="{% url 'category_list' %}" style="flex: 1; padding: 0.75rem; background: #6c757d; color: #fff; text-decoration: none; text-align: center; border-radius: 4px;">
+        Cancel
+      </a>
+      <button type="submit" style="flex: 1; padding: 0.75rem; background: #b02a37; color: #fff; border: none; border-radius: 4px;">
+        Delete Category
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

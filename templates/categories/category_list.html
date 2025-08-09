@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Category Management{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 2rem auto; padding: 1rem; font-family: 'Inter', sans-serif; color: #212529;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h1 style="margin: 0; font-weight: 600;">Category Management</h1>
+    <a href="{% url 'category_add' %}" style="padding: 0.75rem 1.5rem; background: #198754; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+      Add New Category
+    </a>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+    <div style="background: #0d6efd; color: white; padding: 1rem; border-radius: 6px; text-align: center;">
+      <h3 style="margin: 0; font-weight: 700;">{{ categories.count }}</h3>
+      <p style="margin: 0.5rem 0 0 0;">Total Categories</p>
+    </div>
+    <div style="background: #198754; color: white; padding: 1rem; border-radius: 6px; text-align: center;">
+      <h3 style="margin: 0; font-weight: 700;">{{ active_categories_count }}</h3>
+      <p style="margin: 0.5rem 0 0 0;">Active Categories</p>
+    </div>
+    <div style="background: #0dcaf0; color: white; padding: 1rem; border-radius: 6px; text-align: center;">
+      <h3 style="margin: 0; font-weight: 700;">{{ total_products_count }}</h3>
+      <p style="margin: 0.5rem 0 0 0;">Total Products</p>
+    </div>
+    <div style="background: #ffc107; color: #212529; padding: 1rem; border-radius: 6px; text-align: center;">
+      <h3 style="margin: 0; font-weight: 700;">{{ avg_products_per_category }}</h3>
+      <p style="margin: 0.5rem 0 0 0;">Avg Products/Category</p>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 2rem; background: #fff; border: 1px solid #dee2e6; border-radius: 6px; padding: 1rem;">
+    <form method="get" style="display: flex; gap: 1rem; align-items: end;">
+      <div style="flex: 1;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Search Categories</label>
+        <input type="text" name="search" value="{{ request.GET.search }}" 
+               placeholder="Search by name, description..." 
+               style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 6px;">
+      </div>
+      
+      <div style="width: 200px;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Status</label>
+        <select name="status" style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 6px;">
+          <option value="">All Status</option>
+          <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+          <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactive</option>
+        </select>
+      </div>
+      
+      <div>
+        <button type="submit" style="padding: 0.5rem 1rem; background: #0d6efd; color: white; border: none; border-radius: 6px; font-weight: 500;">
+          Filter
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div style="overflow-x: auto; background: #fff; border: 1px solid #dee2e6; border-radius: 6px;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f8f9fa; color: #495057;">
+          <th style="padding: 0.75rem; border-bottom: 1px solid #dee2e6; text-align: left;">ID</th>
+          <th style="padding: 0.75rem; border-bottom: 1px solid #dee2e6; text-align: left;">Category Name</th>
+          <th style="padding: 0.75rem; border-bottom: 1px solid #dee2e6; text-align: left;">Description</th>
+          <th style="padding: 0.75rem; border-bottom: 1px solid #dee2e6; text-align: left;">Products</th>
+          <th style="padding: 0.75rem; border-bottom: 1px solid #dee2e6; text-align: left;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for category in categories %}
+        <tr>
+          <td style="padding: 0.75rem; border-bottom: 1px solid #dee2e6;">{{ category.id }}</td>
+          <td style="padding: 0.75rem; border-bottom: 1px solid #dee2e6;">{{ category.name }}</td>
+          <td style="padding: 0.75rem; border-bottom: 1px solid #dee2e6;">{{ category.description|truncatechars:50 }}</td>
+          <td style="padding: 0.75rem; border-bottom: 1px solid #dee2e6;">{{ category.product_count }}</td>
+          <td style="padding: 0.75rem; border-bottom: 1px solid #dee2e6;">
+            <div style="display: flex; gap: 0.5rem;">
+              <a href="{% url 'category_edit' category.pk %}" style="padding: 0.5rem; background: #0d6efd; color: white; text-decoration: none; border-radius: 4px; font-size: 0.8rem;">
+                Edit
+              </a>
+              <a href="{% url 'category_delete' category.pk %}" style="padding: 0.5rem; background: #dc3545; color: white; text-decoration: none; border-radius: 4px; font-size: 0.8rem;"
+                 onclick="return confirm('Are you sure you want to delete {{ category.name }}?')">
+                Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="padding: 2rem; text-align: center; border-bottom: 1px solid #dee2e6; color: #6c757d;">No categories found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if categories.has_other_pages %}
+  <div style="display: flex; justify-content: center; margin-top: 2rem; gap: 0.5rem;">
+    {% if categories.has_previous %}
+      <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+         style="padding: 0.5rem; background: #0d6efd; color: white; text-decoration: none; border-radius: 4px;">First</a>
+      <a href="?page={{ categories.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+         style="padding: 0.5rem; background: #0d6efd; color: white; text-decoration: none; border-radius: 4px;">Previous</a>
+    {% endif %}
+
+    {% for num in categories.paginator.page_range %}
+      {% if categories.number == num %}
+        <span style="padding: 0.5rem; background: #6c757d; color: white; border-radius: 4px;">{{ num }}</span>
+      {% elif num > categories.number|add:'-3' and num < categories.number|add:'3' %}
+        <a href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+           style="padding: 0.5rem; background: #0d6efd; color: white; text-decoration: none; border-radius: 4px;">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if categories.has_next %}
+      <a href="?page={{ categories.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+         style="padding: 0.5rem; background: #0d6efd; color: white; text-decoration: none; border-radius: 4px;">Next</a>
+      <a href="?page={{ categories.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+         style="padding: 0.5rem; background: #0d6efd; color: white; text-decoration: none; border-radius: 4px;">Last</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

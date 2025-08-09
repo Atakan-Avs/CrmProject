@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="stats-grid mb-4">
+  <!-- Total Categories -->
+  <div class="stat-card">
+    <div class="stat-header">
+      <div class="stat-icon gradient-primary">
+        <i class="fas fa-tags"></i>
+      </div>
+    </div>
+    <div class="stat-value">{{ categories_count }}</div>
+    <div class="stat-label">Total Categories</div>
+  </div>
+
+  <!-- Active Categories -->
+  <div class="stat-card">
+    <div class="stat-header">
+      <div class="stat-icon gradient-success">
+        <i class="fas fa-check-circle"></i>
+      </div>
+    </div>
+    <div class="stat-value">{{ active_categories_count }}</div>
+    <div class="stat-label">Active Categories</div>
+  </div>
+
+  <!-- Total Products -->
+  <div class="stat-card">
+    <div class="stat-header">
+      <div class="stat-icon gradient-info">
+        <i class="fas fa-box"></i>
+      </div>
+    </div>
+    <div class="stat-value">{{ total_products_count }}</div>
+    <div class="stat-label">Total Products</div>
+  </div>
+
+  <!-- Avg Products / Category -->
+  <div class="stat-card">
+    <div class="stat-header">
+      <div class="stat-icon gradient-warning">
+        <i class="fas fa-chart-bar"></i>
+      </div>
+    </div>
+    <div class="stat-value">{{ avg_products_per_category }}</div>
+    <div class="stat-label">Avg Products / Category</div>
+  </div>
+</div>
+{% endblock %}

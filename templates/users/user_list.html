@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 2rem auto; padding: 1rem; font-family: 'Inter', sans-serif; color: #212529;">
+  <!-- Header -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <h1 style="margin:0; font-weight:600;">User Management</h1>
+    <a href="{% url 'user_create' %}" style="padding:0.75rem 1.5rem; background:#198754; color:#fff; border-radius:6px; text-decoration:none; font-weight:500;">
+      + Add New User
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div style="overflow-x:auto; background:#fff; border:1px solid #dee2e6; border-radius:6px;">
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="background:#f8f9fa; color:#495057;">
+          <th style="padding:.75rem; border-bottom:1px solid #dee2e6; text-align:left;">ID</th>
+          <th style="padding:.75rem; border-bottom:1px solid #dee2e6; text-align:left;">Username</th>
+          <th style="padding:.75rem; border-bottom:1px solid #dee2e6; text-align:left;">Email</th>
+          <th style="padding:.75rem; border-bottom:1px solid #dee2e6; text-align:left;">Status</th>
+          <th style="padding:.75rem; border-bottom:1px solid #dee2e6; text-align:center;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td style="padding:.75rem; border-bottom:1px solid #dee2e6;">{{ u.id }}</td>
+          <td style="padding:.75rem; border-bottom:1px solid #dee2e6;">{{ u.username }}</td>
+          <td style="padding:.75rem; border-bottom:1px solid #dee2e6;">{{ u.email }}</td>
+          <td style="padding:.75rem; border-bottom:1px solid #dee2e6;">
+            {% if u.is_active %}
+              <span style="display:inline-block; background:#198754; color:#fff; padding:.25rem .6rem; border-radius:999px; font-size:.75rem;">Active</span>
+            {% else %}
+              <span style="display:inline-block; background:#6c757d; color:#fff; padding:.25rem .6rem; border-radius:999px; font-size:.75rem;">Inactive</span>
+            {% endif %}
+          </td>
+          <td style="padding:.75rem; border-bottom:1px solid #dee2e6;">
+            <div style="display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap;">
+              <a href="{% url 'user_edit' u.pk %}" style="padding:.5rem .75rem; background:#0d6efd; color:#fff; border-radius:4px; text-decoration:none; font-size:.85rem;">Edit</a>
+
+              <!-- Delete = POST (stabil) -->
+              <form method="post" action="{% url 'user_delete' u.pk %}" onsubmit="return confirm('Delete {{ u.username }}?')" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" style="padding:.5rem .75rem; background:#dc3545; color:#fff; border:none; border-radius:4px; font-size:.85rem; cursor:pointer;">
+                  Delete
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="padding:2rem; text-align:center; color:#6c757d;">No users found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

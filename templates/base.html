@@ -1,0 +1,248 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Modern CRM Dashboard{% endblock %}</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+<body>
+  <div class="main-container">
+    <!-- Sidebar -->
+    <nav class="sidebar animate-slide-in-left" id="sidebar">
+      <div class="sidebar-content">
+        <!-- Sidebar Header -->
+        <div class="d-flex align-items-center mb-4">
+          <div class="sidebar-logo me-3">
+            <div class="neumorph-card d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+              <i class="fas fa-cube gradient-text" style="font-size: 1.5rem;"></i>
+            </div>
+          </div>
+          <div class="sidebar-brand">
+            <h5 class="mb-0 fw-bold gradient-text">CRM Pro</h5>
+            <small class="text-muted">Dashboard</small>
+          </div>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <nav class="flex-grow-1">
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+              <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-tachometer-alt"></i>
+                <span class="nav-text">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="{% url 'product_list' %}" class="nav-link {% if 'product' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fas fa-box"></i>
+                <span class="nav-text">Products</span>
+              </a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="{% url 'category_list' %}" class="nav-link {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fas fa-tags"></i>
+                <span class="nav-text">Categories</span>
+              </a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="{% url 'user_list' %}" class="nav-link {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fas fa-users"></i>
+                <span class="nav-text">Users</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer mt-auto">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <div class="avatar me-2">
+                <div class="neumorph-card d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                  <i class="fas fa-user text-primary"></i>
+                </div>
+              </div>
+              <div class="user-info">
+                <small class="fw-semibold d-block text-primary">{{ user.username|default:"Guest" }}</small>
+                <small class="text-muted">Administrator</small>
+              </div>
+            </div>
+            <!-- Basit GET logout link (JS’ye takılmaz) -->
+            <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger" title="Logout" style="display:inline-flex; align-items:center; gap:.25rem;">
+              <i class="fas fa-sign-out-alt"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+      <!-- Top Navbar -->
+      <nav class="navbar">
+        <div class="container-fluid">
+          <div class="d-flex align-items-center">
+            <button class="btn btn-outline-primary me-3" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h4 class="mb-0 fw-bold gradient-text">{% block page_title %}Dashboard{% endblock %}</h4>
+          </div>
+          
+          <div class="d-flex align-items-center gap-3">
+            <!-- Notifications -->
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary position-relative" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-bell"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  3
+                </span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle me-2"></i>New product added</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-exclamation-triangle me-2"></i>Low stock alert</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-user-plus me-2"></i>New user registered</a></li>
+              </ul>
+            </div>
+            
+            <!-- User Menu -->
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle me-2"></i>
+                <span>{{ user.username|default:"Guest" }}</span>
+                <i class="fas fa-chevron-down ms-2"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <!-- Basit GET logout link (dropdown-item görünümü) -->
+                <li>
+                  <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+      
+      <!-- Page Content -->
+      <div class="content-wrapper animate-fade-in-up">
+        <!-- Flash Messages -->
+        {% if messages %}
+          <div class="messages-container mb-4">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Main Content Block -->
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Sidebar toggle functionality
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      
+      sidebar.classList.toggle('collapsed');
+      mainContent.classList.toggle('expanded');
+      
+      // Store preference in localStorage
+      localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+    }
+
+    // Mobile sidebar toggle
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('show');
+    }
+
+    // ---- Basitleştirilmiş loading script (opt-in) ----
+    // Sadece data-loading özelliği olan submit butonlarına uygular.
+    // Logout linkleri etkilenmez.
+    document.addEventListener('DOMContentLoaded', function () {
+      const buttons = document.querySelectorAll('button[type="submit"][data-loading]');
+      buttons.forEach(button => {
+        button.addEventListener('click', function () {
+          button.innerHTML = 'Loading…';
+          button.disabled = true;
+        });
+      });
+
+      // Restore sidebar state
+      const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+      if (sidebarCollapsed) {
+        document.getElementById('sidebar').classList.add('collapsed');
+        document.getElementById('mainContent').classList.add('expanded');
+      }
+
+      // Add smooth scrolling
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      // Add hover effects to cards
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          this.style.transform = 'translateY(-8px)';
+        });
+        card.addEventListener('mouseleave', function() {
+          this.style.transform = 'translateY(0)';
+        });
+      });
+
+      // Add shimmer effect to loading elements
+      const shimmerElements = document.querySelectorAll('.animate-shimmer');
+      shimmerElements.forEach(element => {
+        element.classList.add('animate-shimmer');
+      });
+
+      // Auto-hide alerts after 5 seconds
+      setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        });
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
+

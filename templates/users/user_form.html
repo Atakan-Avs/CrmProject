@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title|default:"User Form" }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto; padding: 1.5rem; background:#fff; border:1px solid #dee2e6; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.06); font-family:'Inter',sans-serif; color:#212529;">
+  <h2 style="margin-bottom:1rem; font-size:1.4rem; font-weight:600; color:#000;">
+    {{ title|default:"User Form" }}
+  </h2>
+
+  <form method="post" action="">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div style="margin-bottom:1.1rem;">
+        <label for="{{ field.id_for_label }}" style="display:block; margin-bottom:.4rem; font-weight:500; font-size:.9rem; color:#212529;">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+          {% for error in field.errors %}
+            <div style="color:#dc3545; font-size:.8rem; margin-top:.25rem;">{{ error }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+      <a href="{% url 'user_list' %}" style="flex:1; padding:.75rem; background:#6c757d; color:#fff; text-decoration:none; text-align:center; border-radius:4px;">
+        Cancel
+      </a>
+      <button type="submit" style="flex:1; padding:.75rem; background:#0d6efd; color:#fff; border:none; border-radius:4px;">
+        Save
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

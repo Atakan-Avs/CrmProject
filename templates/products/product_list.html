@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Product Management{% endblock %}
+
+{% block content %}
+<style>
+  .product-page {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+    font-family: 'Inter', sans-serif;
+    color: #212529;
+  }
+  /* Header */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  /* Buttons */
+  .btn {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease-in-out;
+  }
+  .btn-primary { background: #0d6efd; color: #fff; border: 1px solid #0d6efd; }
+  .btn-primary:hover { background: #0b5ed7; border-color: #0a58ca; }
+  .btn-success { background: #198754; color: #fff; border: 1px solid #198754; }
+  .btn-success:hover { background: #157347; border-color: #146c43; }
+  .btn-danger { background: #dc3545; color: #fff; border: 1px solid #dc3545; }
+  .btn-danger:hover { background: #bb2d3b; border-color: #b02a37; }
+  /* Stat Cards */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .stat-card h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .stat-card p {
+    margin: 0.4rem 0 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+  /* Filter Form */
+  .filter-form {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .filter-form label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+  .filter-form input,
+  .filter-form select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  /* Table */
+  .table-wrapper {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow-x: auto;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    background: #f8f9fa;
+    color: #495057;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.75rem;
+    text-align: left;
+  }
+  tbody td {
+    padding: 0.75rem;
+    border-top: 1px solid #dee2e6;
+    font-size: 0.9rem;
+    color: #212529;
+  }
+  tbody tr:hover {
+    background: #f1f3f5;
+  }
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  /* Empty State */
+  .empty-row td {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+    font-style: italic;
+  }
+</style>
+
+<div class="product-page">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Product Management</h1>
+    <a href="{% url 'product_add' %}" class="btn btn-success">+ Add New Product</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <h3>{{ total_products }}</h3>
+      <p>Total Products</p>
+    </div>
+    <div class="stat-card">
+      <h3>{{ total_categories }}</h3>
+      <p>Total Categories</p>
+    </div>
+  </div>
+
+  <!-- Filter Form -->
+  <div class="filter-form">
+    <form method="get" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+      <div style="flex: 1; min-width: 200px;">
+        <label>Search Products</label>
+        <input type="text" name="search" value="{{ request.GET.search }}" placeholder="Search by name, description...">
+      </div>
+      <div style="flex: 1; min-width: 200px;">
+        <label>Category</label>
+        <select name="category">
+          <option value="">All Categories</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th style="text-align:center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>{{ product.id }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.category.name }}</td>
+          <td>{{ product.price }} ₺</td>
+          <td>{{ product.stock }}</td>
+          <td>
+            <div class="action-buttons">
+              <a href="{% url 'product_edit' product.pk %}" class="btn btn-primary">Edit</a>
+              <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{ product.name }}?')">Delete</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row">
+          <td colspan="6">No products found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+

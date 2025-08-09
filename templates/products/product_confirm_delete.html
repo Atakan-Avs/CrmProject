@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Product{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto; padding: 2rem; border: 1px solid #dee2e6; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+  <h2 style="margin-bottom: 1rem; color: #dc3545; font-weight: 700;">
+    🗑️ Product Deletion Confirmation
+  </h2>
+  
+  <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+    <h6 style="margin: 0 0 0.5rem 0; color: #856404; font-weight: 600;">⚠️ Warning!</h6>
+    <p style="margin: 0; color: #856404; font-size: 0.95rem;">
+      Are you sure you want to delete the product <strong style="color: #000;">{{ product.name }}</strong>?
+    </p>
+  </div>
+
+  <div style="margin-bottom: 1.5rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div>
+        <strong style="color: #333;">Product Name:</strong><br>
+        <span style="color: #000;">{{ product.name }}</span>
+      </div>
+      <div>
+        <strong style="color: #333;">Category:</strong><br>
+        <span style="color: #000;">{{ product.category.name }}</span>
+      </div>
+      <div>
+        <strong style="color: #333;">Price:</strong><br>
+        <span style="color: #000;">{{ product.price }} ₺</span>
+      </div>
+      <div>
+        <strong style="color: #333;">Stock:</strong><br>
+        <span style="color: #000;">{{ product.stock }}</span>
+      </div>
+    </div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div style="display: flex; gap: 1rem;">
+      <a href="{% url 'product_list' %}" 
+         style="flex: 1; padding: 0.75rem; background: #6c757d; color: white; text-decoration: none; text-align: center; border-radius: 4px; font-weight: 600; transition: background 0.2s ease;">
+        Cancel
+      </a>
+      <button type="submit" 
+              style="flex: 1; padding: 0.75rem; background: #dc3545; color: white; border: none; border-radius: 4px; font-weight: 600; transition: background 0.2s ease;">
+        Delete Product
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
